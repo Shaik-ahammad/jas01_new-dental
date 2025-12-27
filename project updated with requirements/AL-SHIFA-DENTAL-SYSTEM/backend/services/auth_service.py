@@ -2,6 +2,7 @@
 
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends, status
+from typing import Optional
 from utils.security import (
     get_password_hash,
     verify_password,
@@ -9,6 +10,7 @@ from utils.security import (
     decode_access_token,
     oauth2_scheme
 )
+from database import get_db
 import models
 import schemas
 
@@ -80,7 +82,7 @@ def authenticate_user(email: str, password: str, db: Session):
     return user
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends()):
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
     Dependency to get the current authenticated user from JWT token.
     """
