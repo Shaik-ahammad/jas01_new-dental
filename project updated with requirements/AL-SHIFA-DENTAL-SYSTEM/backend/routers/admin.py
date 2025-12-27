@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from database import get_db
 from services.auth_service import get_current_user
@@ -116,7 +116,7 @@ def approve_doctor(
     # Update verification status
     doctor.is_verified = True
     doctor.verified_by_admin_id = current_user.id
-    doctor.verified_at = datetime.now()
+    doctor.verified_at = datetime.now(timezone.utc)
     
     db.commit()
     
@@ -223,7 +223,7 @@ def approve_organization(
     # Update verification status
     hospital.is_verified = True
     hospital.verified_by_admin_id = current_user.id
-    hospital.verified_at = datetime.now()
+    hospital.verified_at = datetime.now(timezone.utc)
     hospital.rejection_reason = None
     
     db.commit()

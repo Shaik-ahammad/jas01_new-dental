@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import List, Optional
 from database import get_db
 from services.auth_service import get_current_user
@@ -32,7 +32,7 @@ def get_dashboard(
         raise HTTPException(status_code=404, detail="Patient profile not found")
     
     # Get upcoming appointments
-    today = datetime.now()
+    today = datetime.now(timezone.utc)
     upcoming_appointments = db.query(models.Appointment).filter(
         models.Appointment.patient_id == patient.id,
         models.Appointment.start_time >= today,
@@ -305,7 +305,7 @@ def cancel_appointment(
     
     # Update appointment status
     appointment.status = "cancelled"
-    appointment.cancelled_at = datetime.now()
+    appointment.cancelled_at = datetime.now(timezone.utc)
     appointment.cancellation_reason = reason
     
     db.commit()
